@@ -1,0 +1,31 @@
+services:
+  acapy:
+   
+    image: ghcr.io/hyperledger/aries-cloudagent-python:py3.9-0.12.3
+    platform: linux/amd64
+    ports:
+      - "8030:8030"   
+      - "8031:8031"  
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  
+    command: >
+      start
+      --label "${AGENT_LABEL}"
+      --seed "${AGENT_SEED}"
+      --genesis-url "${GENESIS_URL}"
+      --endpoint "${PUBLIC_ENDPOINT}"
+      --inbound-transport http 0.0.0.0 8030
+      --outbound-transport http
+      --admin 0.0.0.0 8031
+      --admin-insecure-mode
+      --wallet-type askar
+      --wallet-name university_wallet
+      --wallet-key "${WALLET_KEY}"
+      --auto-provision
+      --auto-accept-invites
+      --auto-accept-requests
+      --auto-ping-connection
+      --auto-verify-presentation
+      --preserve-exchange-records
+      --webhook-url "${WEBHOOK_URL}"
+      --log-level info
