@@ -1,0 +1,23 @@
+{
+  "name": "ssi-university-portal",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch server.js",
+    "logger": "node scripts/webhook-logger.js",
+    "qr": "node scripts/show-qr.js",
+    "register-schema": "node scripts/register-schema.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "qrcode": "^1.5.4",
+    "qrcode-terminal": "^0.12.0"
+  }
+}
