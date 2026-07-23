@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin · University Portal</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main class="wrap narrow">
+  <h1>🏛️ Admin — Student Onboarding</h1>
+  <p class="sub">Issue a Student ID credential to a student's wallet.</p>
+
+  <div class="card" id="formCard">
+    <label>Student name</label>
+    <input class="field" id="student_name" placeholder="Syeda Tasfia Tasnim">
+    <label>Student ID</label>
+    <input class="field" id="student_id" placeholder="2026-CSE-001">
+    <label>Department</label>
+    <input class="field" id="department" placeholder="CSE">
+    <label>Email</label>
+    <input class="field" id="email" placeholder="tasnim@example.edu">
+    <button class="btn" onclick="onboard()">Create invitation QR</button>
+  </div>
+
+  <div class="card center" id="qrCard" style="display:none">
+    <div id="qrbox"></div>
+    <p><span class="badge" id="statusBadge">Waiting for scan…</span></p>
+    <button class="btn" id="issueBtn" onclick="issue()" disabled>Issue Student ID credential</button>
+  </div>
+</main>
+<script>
+let onboardId = null;
+
+async function onboard() {
+  const body = {};
+  for (const f of ['student_name', 'student_id', 'department', 'email']) {
+    body[f] = document.getElementById(f).value.trim();
+  }
+  const r = await fetch('/api/admin/onboard', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = await r.json();
+  if (data.error) { alert(data.error); return; }
+  onboardId = data.onboardId;
+  document.getElementById('qrCard').style.display = '';
+  document.getElementById('qrbox').innerHTML =
+    '<img class="qr" src="' + data.qr + '" alt="Invitation QR">';
+  poll();
+}
+
+async function poll() {
+  const r = await fetch('/api/admin/onboard/' + onboardId + '/status');
+  const { status } = await r.json();
+  const badge = document.getElementById('statusBadge');
+  if (status === 'connected') {
+    badge.textContent = 'Connected — ready to issue';
+    badge.className = 'badge ok';
+    document.getElementById('issueBtn').disabled = false;
+  } else if (status === 'issued') {
+    badge.textContent = 'Credential issued 🎉';
+    badge.className = 'badge ok';
+    document.getElementById('issueBtn').disabled = true;
+    return; // shesh — r poll lagbe na
+  }
+  setTimeout(poll, 2000);
+}
+
+async function issue() {
+  document.getElementById('issueBtn').disabled = true;
+  const r = await fetch('/api/admin/onboard/' + onboardId + '/issue', { method: 'POST' });
+  const data = await r.json();
+  if (data.error) { alert(data.error); document.getElementById('issueBtn').disabled = false; }
+}
+</script>
+</body>
+</html>

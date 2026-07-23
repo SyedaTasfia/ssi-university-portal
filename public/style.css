@@ -1,0 +1,56 @@
+:root {
+  --ink: #1b2a24;          
+  --green: #0f3d2e;        
+  --green-soft: #e7efe9;
+  --paper: #f7f6f1;        
+  --gold: #b8860b;         
+  --line: #d8d5c8;
+  --ok: #1a7f37;
+  --err: #b3261e;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif; line-height: 1.55;
+}
+h1, h2 { font-family: Georgia, "Times New Roman", serif; color: var(--green); }
+h1 { border-bottom: 3px double var(--gold); padding-bottom: .35rem; }
+.wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1.25rem; }
+.narrow { max-width: 520px; }
+.sub { color: #5a6b62; margin-top: -0.5rem; }
+.card {
+  background: #fff; border: 1px solid var(--line); border-radius: 10px;
+  padding: 1.5rem; margin: 1rem 0; box-shadow: 0 1px 3px rgba(27,42,36,.06);
+}
+.center { text-align: center; }
+.qr { width: 260px; height: 260px; image-rendering: pixelated; border: 6px solid var(--green-soft); border-radius: 8px; }
+.muted { color: #6b7a72; font-size: .95rem; }
+.btn {
+  background: var(--green); color: #fff; border: 0; border-radius: 8px;
+  padding: .65rem 1.2rem; font-size: 1rem; cursor: pointer;
+}
+.btn:disabled { background: #9db3a9; cursor: not-allowed; }
+.btn.ghost { background: transparent; color: var(--green); border: 1px solid var(--green); }
+.field { display: block; width: 100%; padding: .6rem .7rem; margin: .35rem 0 .9rem;
+  border: 1px solid var(--line); border-radius: 8px; font-size: 1rem; }
+label { font-weight: 600; font-size: .92rem; }
+.badge { display: inline-block; padding: .2rem .7rem; border-radius: 999px;
+  font-size: .85rem; background: var(--green-soft); color: var(--green); }
+.badge.ok { background: #e2f2e5; color: var(--ok); }
+.nav { display: flex; gap: 1rem; align-items: center; padding: .9rem 0;
+  border-bottom: 1px solid var(--line); margin-bottom: 1rem; }
+.nav a { color: var(--green); text-decoration: none; font-weight: 600; }
+.nav .spacer { flex: 1; }
+.idcard {
+  border: 2px solid var(--green); border-radius: 12px; overflow: hidden; max-width: 420px;
+}
+.idcard header { background: var(--green); color: #fff; padding: .6rem 1rem; font-family: Georgia, serif; }
+.idcard .rows { padding: 1rem; }
+.idcard .rows div { display: flex; justify-content: space-between; padding: .3rem 0;
+  border-bottom: 1px dashed var(--line); }
+.chat { max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: .4rem; padding: .5rem 0; }
+.msg { max-width: 75%; padding: .5rem .8rem; border-radius: 10px; font-size: .95rem; }
+.msg.faculty { align-self: flex-end; background: var(--green); color: #fff; }
+.msg.student { align-self: flex-start; background: var(--green-soft); }
+.row { display: flex; gap: .5rem; }
+.row .field { margin: 0; flex: 1; }
