@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login · University Portal</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main class="wrap narrow center">
+  <h1>🎓 University Portal</h1>
+  <p class="sub">Log in with your Student ID credential — no password needed.</p>
+  <div class="card">
+    <div id="qrbox"><p class="muted">Preparing secure QR…</p></div>
+    <p class="muted" id="status">Scan with your wallet app, then share your Student ID.</p>
+  </div>
+</main>
+<script>
+let loginId = null;
+
+async function start() {
+  const r = await fetch('/api/login/start', { method: 'POST' });
+  const data = await r.json();
+  if (data.error) {
+    document.getElementById('status').textContent = 'Error: ' + data.error;
+    return;
+  }
+  loginId = data.loginId;
+  document.getElementById('qrbox').innerHTML =
+    '<img class="qr" src="' + data.qr + '" alt="Login QR">';
+  poll();
+}
+
+async function poll() {
+  const r = await fetch('/api/login/status/' + loginId);
+  const { status } = await r.json();
+  if (status === 'verified') { window.location = '/dashboard'; return; }
+  if (status === 'failed') {
+    document.getElementById('status').textContent =
+      'Verification failed. Reload the page to try again.';
+    return;
+  }
+  setTimeout(poll, 2000);
+}
+
+start();
+</script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard · University Portal</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main class="wrap">
+  <nav class="nav">
+    <strong>🎓 University Portal</strong>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/profile">Profile</a>
+    <span class="spacer"></span>
+    <button class="btn ghost" onclick="logout()">Log out</button>
+  </nav>
+
+  <h1 id="hello">Welcome</h1>
+  <p class="sub">You are logged in via a verified credential — no password was ever stored.</p>
+
+  <div class="card">
+    <h2>📅 Today's classes</h2>
+    <p>10:00 — Distributed Systems (Room 402)<br>
+       13:00 — Cryptography Lab (Lab 2)<br>
+       15:00 — Research Methodology (Room 118)</p>
+  </div>
+  <div class="card">
+    <h2>📣 Notice board</h2>
+    <p>Semester registration closes Friday. Library extended hours during exam week.</p>
+  </div>
+</main>
+<script>
+async function load() {
+  const r = await fetch('/api/me');
+  if (r.status === 401) { window.location = '/login'; return; }
+  const me = await r.json();
+  document.getElementById('hello').textContent =
+    'Welcome, ' + me.student_name + ' (' + me.department + ')';
+}
+async function logout() {
+  await fetch('/api/logout', { method: 'POST' });
+  window.location = '/login';
+}
+load();
+</script>
+</body>
+</html>
