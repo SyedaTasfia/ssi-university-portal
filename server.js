@@ -42,6 +42,10 @@ app.post('/api/logout', (req, res) => req.session.destroy(() => res.json({ ok: t
 app.get('/profile', requireLogin, (req, res) =>
     res.sendFile(path.join(__dirname, 'public', 'profile.html')));
 
+ // Faculty DIDComm Chat
+app.use('/api/faculty', require('./routes/faculty'));
+app.get('/faculty', (req, res) =>
+  res.sendFile(path.join(__dirname, 'public', 'faculty.html')));
 
 // CSS ar onnano static file
 app.use(express.static(path.join(__dirname, 'public')));

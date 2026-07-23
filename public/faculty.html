@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Faculty Chat · University Portal</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main class="wrap narrow">
+  <h1>👩‍🏫 Faculty Messaging</h1>
+  <p class="sub">Secure 1-to-1 DIDComm chat between Prof. Ayesha Rahman and a student.</p>
+
+  <div class="card center" id="connectCard">
+    <button class="btn" onclick="invite()">Create chat invitation QR</button>
+    <div id="qrbox" style="margin-top:1rem"></div>
+    <p><span class="badge" id="statusBadge">Not connected</span></p>
+  </div>
+
+  <div class="card" id="chatCard" style="display:none">
+    <div class="chat" id="thread"></div>
+    <div class="row">
+      <input class="field" id="msgInput" placeholder="Type a message as faculty…">
+      <button class="btn" onclick="send()">Send</button>
+    </div>
+  </div>
+</main>
+<script>
+async function invite() {
+  const r = await fetch('/api/faculty/invite', { method: 'POST' });
+  const data = await r.json();
+  if (data.error) { alert(data.error); return; }
+  document.getElementById('qrbox').innerHTML =
+    '<img class="qr" src="' + data.qr + '" alt="Faculty chat QR">';
+  document.getElementById('statusBadge').textContent = 'Waiting for scan…';
+  poll();
+}
+
+async function poll() {
+  const r = await fetch('/api/faculty/messages');
+  const data = await r.json();
+  const badge = document.getElementById('statusBadge');
+  if (data.status === 'connected') {
+    badge.textContent = 'Connected';
+    badge.className = 'badge ok';
+    document.getElementById('chatCard').style.display = '';
+    render(data.messages);
+  }
+  setTimeout(poll, 2000);
+}
+
+function render(messages) {
+  document.getElementById('thread').innerHTML = messages.map(m =>
+    '<div class="msg ' + m.from + '">' + escapeHtml(m.text) + '</div>'
+  ).join('');
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+async function send() {
+  const input = document.getElementById('msgInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  await fetch('/api/faculty/send', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text }),
+  });
+}
+</script>
+</body>
+</html>
