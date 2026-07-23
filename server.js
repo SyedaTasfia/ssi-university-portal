@@ -23,21 +23,25 @@ app.get('/admin', (req, res) =>
 app.use('/api/login', require('./routes/login'));
 
 function requireLogin(req, res, next) {
-  if (req.session.user) return next();
-  res.redirect('/login');   // session na thakle gate-ei ferot
+    if (req.session.user) return next();
+    res.redirect('/login');   // session na thakle gate-ei ferot
 }
 
 app.get('/', (req, res) => res.redirect(req.session.user ? '/dashboard' : '/login'));
 app.get('/login', (req, res) =>
-  res.sendFile(path.join(__dirname, 'public', 'login.html')));
+    res.sendFile(path.join(__dirname, 'public', 'login.html')));
 app.get('/dashboard', requireLogin, (req, res) =>
-  res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
+    res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
 
 app.get('/api/me', (req, res) => {
-  if (!req.session.user) return res.status(401).json({ error: 'not logged in' });
-  res.json(req.session.user);
+    if (!req.session.user) return res.status(401).json({ error: 'not logged in' });
+    res.json(req.session.user);
 });
 app.post('/api/logout', (req, res) => req.session.destroy(() => res.json({ ok: true })));
+
+app.get('/profile', requireLogin, (req, res) =>
+    res.sendFile(path.join(__dirname, 'public', 'profile.html')));
+
 
 // CSS ar onnano static file
 app.use(express.static(path.join(__dirname, 'public')));

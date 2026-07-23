@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Profile · University Portal</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<main class="wrap">
+  <nav class="nav">
+    <strong>🎓 University Portal</strong>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/profile">Profile</a>
+    <span class="spacer"></span>
+    <button class="btn ghost" onclick="logout()">Log out</button>
+  </nav>
+
+  <h1>My Profile</h1>
+  <p class="sub">Every field below came from your verified credential presentation.</p>
+
+  <div class="idcard card">
+    <header>STUDENT IDENTITY CARD</header>
+    <div class="rows">
+      <div><span>Name</span> <strong id="student_name">—</strong></div>
+      <div><span>Student ID</span> <strong id="student_id">—</strong></div>
+      <div><span>Department</span> <strong id="department">—</strong></div>
+      <div><span>Email</span> <strong id="email">—</strong></div>
+    </div>
+  </div>
+  <p class="muted">✅ Cryptographically verified · issued by University Portal</p>
+</main>
+<script>
+async function load() {
+  const r = await fetch('/api/me');
+  if (r.status === 401) { window.location = '/login'; return; }
+  const me = await r.json();
+  for (const k of ['student_name', 'student_id', 'department', 'email']) {
+    document.getElementById(k).textContent = me[k] || '—';
+  }
+}
+async function logout() {
+  await fetch('/api/logout', { method: 'POST' });
+  window.location = '/login';
+}
+load();
+</script>
+</body>
+</html>
